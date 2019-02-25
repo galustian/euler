@@ -1,5 +1,4 @@
 from math import sqrt, floor
-from numba import njit, jit
 
 def compute_all_phis(until):
     num_list = list(range(until+1))
