@@ -56,15 +56,3 @@ def compute():
 
 if __name__ == '__main__':
     print(compute())
-
-"""
-    next_smaller_prime = [0] * (10**7) # idx = num, val = next-smaller-(or-equal)-prime
-    upper_smallest_prime_i = 0
-    
-    len_prime_list = len(prime_list)
-    for n in range(2, 10**7):
-        while upper_smallest_prime_i+1 < len_prime_list and prime_list[upper_smallest_prime_i+1] <= n:
-            upper_smallest_prime_i += 1
-        
-        next_smaller_prime[n] = prime_list[upper_smallest_prime_i]
-"""
