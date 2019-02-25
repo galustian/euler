@@ -1,5 +1,3 @@
-from math import sqrt, floor
-
 def compute_all_phis(until):
     num_list = list(range(until+1))
     for i in range(2, len(num_list)):
