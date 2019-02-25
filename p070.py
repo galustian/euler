@@ -1,30 +1,6 @@
 from math import sqrt, floor
 from numba import njit, jit
 
-@jit(nopython=True)
-def is_prime(n):
-    if n == 1:
-        return False
-    elif n == 2:
-        return True
-    elif n == 3:
-        return True
-    elif n % 2 == 0:
-        return False
-    elif n % 3 == 0:
-        return False
-
-    for i in range(5, floor(sqrt(n))+1, 6):
-        if n % i == 0: return False
-        if n % (i+2) == 0: return False
-    return True
-
-@njit
-def get_phi(num, prime_exp_i_notzero_set):
-    for i in prime_exp_i_notzero_set:
-        num *= 1 - 1/prime_list[i]
-    return num
-
 def compute_all_phis(until):
     num_list = list(range(until+1))
     for i in range(2, len(num_list)):
