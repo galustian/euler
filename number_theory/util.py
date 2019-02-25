@@ -24,6 +24,15 @@ def is_prime(n):
     
     return True
 
+def compute_all_phis(until):
+    num_list = list(range(until+1))
+    for i in range(2, len(num_list)):
+        if num_list[i] == i:  # is prime
+            for j in range(i, len(num_list), i):
+                    num_list[j] -= num_list[j] // i
+
+    return num_list
+
 # https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
 def gen_prime_table(bound):
     primes = [2, 3]
