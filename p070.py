@@ -1,10 +1,5 @@
 from math import sqrt, floor
-from functools import reduce
-from operator import mul
-from numba import jit
-
-prime_list = None
-
+from numba import njit, jit
 
 @jit(nopython=True)
 def is_prime(n):
@@ -24,51 +19,52 @@ def is_prime(n):
         if n % (i+2) == 0: return False
     return True
 
+@njit
+def get_phi(num, prime_exp_i_notzero_set):
+    for i in prime_exp_i_notzero_set:
+        num *= 1 - 1/prime_list[i]
+    return num
+
+def compute_all_phis(until):
+    num_list = list(range(until+1))
+    for i in range(2, len(num_list)):
+        if num_list[i] == i:  # is prime
+            for j in range(i, len(num_list), i):
+                    num_list[j] -= num_list[j] // i
+
+    return num_list
 
 def is_perm(n1, n2):
     return sorted(list(str(n1))) == sorted(list(str(n2)))
 
-
-def get_num(primes, prime_exp):
-    prime_with_exp = [primes[i] ** prime_exp[i] for i in range(len(primes))]
-    return reduce(mul, prime_with_exp)
-
-
-def phi(primes, num):
-    for p in primes:
-        num *= 1 - 1 / p
-    return int(num)
-
-
-def increment_prime_list(primes, prime_exp, max_size=90_000):
-    i = 0
-    prime_exp[i] += 1
-    while get_num(primes, prime_exp) > max_size:
-        if i == len(primes)-1:
-            primes.append(prime_list[i+1])
-            prime_exp.append(0)
-
-        prime_exp[i] = 0 # set previous prime exponent to 0
-        prime_exp[i+1] += 1 # increment current prime exponent
-
-        i += 1
-
-
 def compute():
-    phi_primes = [prime_list[0]]
-    phi_prime_exp = [1]
+    eulers_phi = compute_all_phis(10**7)
     
-    while True:
-        num = get_num(phi_primes, phi_prime_exp)        
-        phi_num = phi([phi_primes[i] for i in range(len(phi_primes)) if phi_prime_exp[i] != 0], num)
-        if is_perm(phi_num, num):
-            print(phi_num)
-            return num
+    min_n = 2
+    min_ratio_n = 2**20
+    
+    for n in range(3, 10**7):
+        phi_n = eulers_phi[n]
+        if phi_n == -1: continue
+        if is_perm(n, phi_n) and n / phi_n < min_ratio_n:
+            min_n = n
+            min_ratio_n = n / phi_n
 
-        increment_prime_list(phi_primes, phi_prime_exp)
+    return min_n
+
 
 
 if __name__ == '__main__':
-    # Todo: lazy prime-generation
-    prime_list = [i for i in reversed(range(3, 9_000, 2)) if is_prime(i)] + [2]
     print(compute())
+
+"""
+    next_smaller_prime = [0] * (10**7) # idx = num, val = next-smaller-(or-equal)-prime
+    upper_smallest_prime_i = 0
+    
+    len_prime_list = len(prime_list)
+    for n in range(2, 10**7):
+        while upper_smallest_prime_i+1 < len_prime_list and prime_list[upper_smallest_prime_i+1] <= n:
+            upper_smallest_prime_i += 1
+        
+        next_smaller_prime[n] = prime_list[upper_smallest_prime_i]
+"""
